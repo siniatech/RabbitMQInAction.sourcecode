@@ -1,3 +1,10 @@
+/**
+ * RabbitMQ in Action - Chapter 2 Examples 
+ * 
+ * @author Alvaro Videla (original)
+ * @author Jason J. W. Williams (original)
+ * @author Simon Fraser, Siniatech Ltd (translation)
+ */
 package rabbitmqinaction.sourcecode.chapter2;
 
 public class Chapter2Configuration {

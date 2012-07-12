@@ -1,3 +1,8 @@
+/**
+ * RabbitMQ in Action - Generic constants 
+ * 
+ * @author Simon Fraser, Siniatech Ltd 
+ */
 package rabbitmqinaction.sourcecode;
 
 import java.util.HashMap;
