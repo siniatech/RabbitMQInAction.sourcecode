@@ -15,5 +15,5 @@ object GenericConfiguration {
   val DirectExchangeType = "direct"
   val PlainContentType = "text/plain"
   val EmptyJavaMap = new java.util.HashMap[String, Object]
-  def host: String = "localhost"
+  def host: String = "192.168.0.19"
 }

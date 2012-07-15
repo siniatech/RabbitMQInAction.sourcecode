@@ -17,7 +17,7 @@ public class GenericConfiguration {
     public static final boolean AUTO_DELETE = true;
     public static final boolean NON_AUTO_DELETE = false;
     public static final String DIRECT_EXCHANGE_TYPE = "direct";
-    public static final String HOST = "localhost";
+    public static final String HOST = "192.168.0.19";
     public static final String PLAIN_CONTENT_TYPE = "text/plain";
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>();
 
