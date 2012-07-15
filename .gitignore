@@ -1,5 +1,10 @@
 bin
+target
 obj
+.project
+.cache
+.settings
+.classpath
 *.suo
 *.csproj.user
 *.class
