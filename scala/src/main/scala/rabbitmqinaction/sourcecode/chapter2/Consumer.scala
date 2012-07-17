@@ -52,7 +52,7 @@ class ConsumerCallback(channel: Channel) extends DefaultConsumer(channel) {
         getChannel.basicCancel(consumerTag)
         getChannel.close
         getChannel.getConnection.close
-        System.exit(1)
+        System.exit(0)
       }
       case _ => println(msg);
     }
