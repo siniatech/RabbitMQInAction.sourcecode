@@ -18,7 +18,7 @@ import Chapter2Configuration.Username
 import rabbitmqinaction.sourcecode.GenericConfiguration.PlainContentType
 import rabbitmqinaction.sourcecode.GenericConfiguration.host
 
-object Producer {
+object ProducerWithConfirms {
 
   def main(args: Array[String]) {
     if (args.length != 1) {
@@ -39,10 +39,23 @@ object Producer {
     val msgProperties = msgPropertiesBuilder.build
 
     val channel = connection.createChannel
+    channel.confirmSelect
+    channel.addConfirmListener(ConfirmHandler);
     channel.basicPublish(Exchange, RoutingKey, msgProperties, msg.getBytes)
+    channel.waitForConfirmsOrDie
 
     channel.close
     connection.close
+  }
+}
+
+object ConfirmHandler extends ConfirmListener {
+  override def handleAck(deliveryTag: Long, multiple: Boolean) {
+    println("Confirm receipt")
+  }
+
+  override def handleNack(deliveryTag: Long, multiple: Boolean) {
+    println("Message lost");
   }
 }
 
