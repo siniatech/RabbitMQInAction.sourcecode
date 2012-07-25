@@ -20,7 +20,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
-public class Consumer {
+public class ConsumerWithConfirms {
 
     public static void main( String[] args ) throws IOException {
         ConnectionFactory factory = new ConnectionFactory();
@@ -34,19 +34,20 @@ public class Consumer {
         channel.exchangeDeclare( EXCHANGE, DIRECT_EXCHANGE_TYPE, ACTIVE, DURABLE, NON_AUTO_DELETE, new HashMap<String, Object>() );
         channel.queueDeclare( QUEUE_NAME, ACTIVE, DURABLE, NON_AUTO_DELETE, null );
         channel.queueBind( QUEUE_NAME, EXCHANGE, ROUTING_KEY, EMPTY_MAP );
-        channel.basicConsume( QUEUE_NAME, false, CONSUMER_TAG, new ConsumerCallback( channel ) );
+        channel.basicConsume( QUEUE_NAME, false, CONSUMER_TAG, new ConsumerCallbackWithConfirms( channel ) );
     }
 
 }
 
-class ConsumerCallback extends DefaultConsumer {
+class ConsumerCallbackWithConfirms extends DefaultConsumer {
 
-    public ConsumerCallback( Channel channel ) {
+    public ConsumerCallbackWithConfirms( Channel channel ) {
         super( channel );
     }
 
     @Override
     public void handleDelivery( String consumerTag, Envelope envelope, BasicProperties properties, byte[] body ) throws IOException {
+        getChannel().basicAck( envelope.getDeliveryTag(), false );
         String msg = new String( body );
         if ( "quit".equals( msg ) ) {
             getChannel().basicCancel( consumerTag );

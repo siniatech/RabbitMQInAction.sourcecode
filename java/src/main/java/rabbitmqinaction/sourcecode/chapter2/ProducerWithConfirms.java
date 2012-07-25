@@ -16,10 +16,11 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.AMQP.BasicProperties.Builder;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.ConfirmListener;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-public class Producer {
+public class ProducerWithConfirms {
 
     public static void main( String[] args ) throws IOException, InterruptedException {
         if ( args.length != 1 ) {
@@ -39,11 +40,25 @@ public class Producer {
         BasicProperties msgProperties = msgPropertiesBuilder.build();
 
         Channel channel = connection.createChannel();
-        channel.exchangeDeclare( EXCHANGE, DIRECT_EXCHANGE_TYPE, PASSIVE, DURABLE, NON_AUTO_DELETE, EMPTY_MAP );
+        channel.confirmSelect();
+        channel.addConfirmListener( new ConfirmHandler() );
         channel.basicPublish( EXCHANGE, ROUTING_KEY, msgProperties, msg.getBytes() );
+        channel.waitForConfirmsOrDie();
 
         channel.close();
         connection.close();
+    }
+
+}
+
+class ConfirmHandler implements ConfirmListener {
+
+    public void handleAck( long deliveryTag, boolean multiple ) throws IOException {
+        System.out.println( "Confirm receipt" );
+    }
+
+    public void handleNack( long deliveryTag, boolean multiple ) throws IOException {
+        System.out.println( "Message lost" );
     }
 
 }
