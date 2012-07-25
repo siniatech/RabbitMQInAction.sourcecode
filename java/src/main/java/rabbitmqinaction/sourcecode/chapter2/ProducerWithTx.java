@@ -19,7 +19,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-public class Producer {
+public class ProducerWithTx {
 
     public static void main( String[] args ) throws IOException, InterruptedException {
         if ( args.length != 1 ) {
@@ -39,8 +39,9 @@ public class Producer {
         BasicProperties msgProperties = msgPropertiesBuilder.build();
 
         Channel channel = connection.createChannel();
-        channel.exchangeDeclare( EXCHANGE, DIRECT_EXCHANGE_TYPE, PASSIVE, DURABLE, NON_AUTO_DELETE, EMPTY_MAP );
+        channel.txSelect();
         channel.basicPublish( EXCHANGE, ROUTING_KEY, msgProperties, msg.getBytes() );
+        channel.txCommit();
 
         channel.close();
         connection.close();
