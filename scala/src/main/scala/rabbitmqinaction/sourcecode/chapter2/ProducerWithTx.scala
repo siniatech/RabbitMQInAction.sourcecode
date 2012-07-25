@@ -8,7 +8,6 @@
 package rabbitmqinaction.sourcecode.chapter2
 
 import com.rabbitmq.client.AMQP
-import com.rabbitmq.client.ConfirmListener
 import com.rabbitmq.client.ConnectionFactory
 
 import Chapter2Configuration.Exchange
@@ -18,7 +17,7 @@ import Chapter2Configuration.Username
 import rabbitmqinaction.sourcecode.GenericConfiguration.PlainContentType
 import rabbitmqinaction.sourcecode.GenericConfiguration.host
 
-object Producer {
+object ProducerWithTx {
 
   def main(args: Array[String]) {
     if (args.length != 1) {
@@ -39,12 +38,15 @@ object Producer {
     val msgProperties = msgPropertiesBuilder.build
 
     val channel = connection.createChannel
+    channel.txSelect
     channel.basicPublish(Exchange, RoutingKey, msgProperties, msg.getBytes)
+    channel.txCommit
 
     channel.close
     connection.close
   }
 }
+
 
 
 

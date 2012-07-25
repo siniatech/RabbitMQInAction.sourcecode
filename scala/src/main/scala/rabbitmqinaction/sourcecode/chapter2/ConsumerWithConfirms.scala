@@ -26,7 +26,7 @@ import rabbitmqinaction.sourcecode.GenericConfiguration.EmptyJavaMap
 import rabbitmqinaction.sourcecode.GenericConfiguration.NonAutoDelete
 import rabbitmqinaction.sourcecode.GenericConfiguration.host
 
-object Consumer {
+object ConsumerWithConfirms {
   def main(args: Array[String]) {
     val factory = new ConnectionFactory
     factory.setUsername(Username)
@@ -39,12 +39,13 @@ object Consumer {
     channel.exchangeDeclare(Exchange, DirectExchangeType, Active, Durable, NonAutoDelete, EmptyJavaMap);
     channel.queueDeclare(QueueName, Active, Durable, NonAutoDelete, null);
     channel.queueBind(QueueName, Exchange, RoutingKey, EmptyJavaMap);
-    channel.basicConsume(QueueName, false, ConsumerTag, new ConsumerCallback(channel));
+    channel.basicConsume(QueueName, false, ConsumerTag, new ConsumerCallbackWithConfirms(channel));
   }
 }
 
-class ConsumerCallback(channel: Channel) extends DefaultConsumer(channel) {
+class ConsumerCallbackWithConfirms(channel: Channel) extends DefaultConsumer(channel) {
   override def handleDelivery(consumerTag: String, envelope: Envelope, props: BasicProperties, body: Array[Byte]) {
+    getChannel.basicAck(envelope.getDeliveryTag, false)
     val msg = new String(body)
     msg match {
       case "quit" => {
